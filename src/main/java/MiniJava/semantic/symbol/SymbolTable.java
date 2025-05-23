@@ -24,6 +24,10 @@ public class SymbolTable {
         keyWords.put("false", new Address(0, varType.Bool, TypeAddress.Imidiate));
     }
 
+    public SymbolType getLastType() {
+        return lastType;
+    }
+
     public void setLastType(SymbolType type) {
         lastType = type;
     }
@@ -36,14 +40,14 @@ public class SymbolTable {
     }
 
     public void addField(String fieldName, String className) {
-        klasses.get(className).Fields.put(fieldName, new Symbol(lastType, mem.getDateAddress()));
+        klasses.get(className).Fields.put(fieldName, new Symbol(getLastType(), mem.getDateAddress()));
     }
 
     public void addMethod(String className, String methodName, int address) {
         if (klasses.get(className).Methodes.containsKey(methodName)) {
             ErrorHandler.printError("This method already defined");
         }
-        klasses.get(className).Methodes.put(methodName, new Method(address, lastType));
+        klasses.get(className).Methodes.put(methodName, new Method(address, getLastType()));
     }
 
     public void addMethodParameter(String className, String methodName, String parameterName) {
@@ -51,14 +55,10 @@ public class SymbolTable {
     }
 
     public void addMethodLocalVariable(String className, String methodName, String localVariableName) {
-//        try {
         if (klasses.get(className).Methodes.get(methodName).localVariable.containsKey(localVariableName)) {
             ErrorHandler.printError("This variable already defined");
         }
-        klasses.get(className).Methodes.get(methodName).localVariable.put(localVariableName, new Symbol(lastType, mem.getDateAddress()));
-//        }catch (NullPointerException e){
-//            e.printStackTrace();
-//        }
+        klasses.get(className).Methodes.get(methodName).localVariable.put(localVariableName, new Symbol(getLastType(), mem.getDateAddress()));
     }
 
     public void setSuperClass(String superClass, String className) {
@@ -70,13 +70,7 @@ public class SymbolTable {
     }
 
     public Symbol get(String fieldName, String className) {
-//        try {
         return klasses.get(className).getField(fieldName);
-//        }catch (NullPointerException n)
-//        {
-//            n.printStackTrace();
-//            return null;
-//        }
     }
 
     public Symbol get(String className, String methodName, String variable) {
@@ -90,12 +84,7 @@ public class SymbolTable {
     }
 
     public void startCall(String className, String methodName) {
-//        try {
         klasses.get(className).Methodes.get(methodName).reset();
-//        }catch (NullPointerException n)
-//        {
-//            n.printStackTrace();
-//        }
     }
 
     public int getMethodCallerAddress(String className, String methodName) {
@@ -107,19 +96,12 @@ public class SymbolTable {
     }
 
     public SymbolType getMethodReturnType(String className, String methodName) {
-//        try {
         return klasses.get(className).Methodes.get(methodName).returnType;
-//        }catch (NullPointerException ed){
-//            ed.printStackTrace();
-//            return null;
-//        }
-
     }
 
     public int getMethodAddress(String className, String methodName) {
         return klasses.get(className).Methodes.get(methodName).codeAddress;
     }
-
 
     class Klass {
         public Map<String, Symbol> Fields;
@@ -136,9 +118,7 @@ public class SymbolTable {
                 return Fields.get(fieldName);
             }
             return superClass.getField(fieldName);
-
         }
-
     }
 
     class Method {
@@ -168,7 +148,7 @@ public class SymbolTable {
         }
 
         public void addParameter(String parameterName) {
-            parameters.put(parameterName, new Symbol(lastType, mem.getDateAddress()));
+            parameters.put(parameterName, new Symbol(getLastType(), mem.getDateAddress()));
             orderdParameters.add(parameterName);
         }
 
@@ -180,7 +160,6 @@ public class SymbolTable {
             return parameters.get(orderdParameters.get(index++));
         }
     }
-
 }
 
 //class Symbol{

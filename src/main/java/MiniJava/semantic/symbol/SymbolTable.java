@@ -47,7 +47,7 @@ public class SymbolTable {
         if (klasses.get(className).Methodes.containsKey(methodName)) {
             ErrorHandler.printError("This method already defined");
         }
-        klasses.get(className).Methodes.put(methodName, new Method(address, getLastType()));
+        klasses.get(className).Methodes.put(methodName, new Method(new MethodDescriptor(address, getLastType())));
     }
 
     public void addMethodParameter(String className, String methodName, String parameterName) {
@@ -121,6 +121,15 @@ public class SymbolTable {
         }
     }
 
+    class MethodDescriptor {
+        public int codeAddress;
+        public SymbolType returnType;
+        public MethodDescriptor(int codeAddress, SymbolType returnType) {
+            this.codeAddress = codeAddress;
+            this.returnType = returnType;
+        }
+    }
+
     class Method {
         public int codeAddress;
         public Map<String, Symbol> parameters;
@@ -131,9 +140,9 @@ public class SymbolTable {
         public SymbolType returnType;
         private int index;
 
-        public Method(int codeAddress, SymbolType returnType) {
-            this.codeAddress = codeAddress;
-            this.returnType = returnType;
+        public Method(MethodDescriptor descriptor) {
+            this.codeAddress = descriptor.codeAddress;
+            this.returnType = descriptor.returnType;
             this.orderdParameters = new ArrayList<>();
             this.returnAddress = mem.getDateAddress();
             this.callerAddress = mem.getDateAddress();
